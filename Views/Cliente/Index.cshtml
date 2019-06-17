@@ -1,0 +1,50 @@
+@{
+    Layout = "_Layout";
+}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Ingreso de cliente</li>
+  </ol>
+</nav>
+<div class="display-4 text-center">Ingreso de clientes</div>
+<hr>
+<div class="row justify-content-center">
+    <div class="col-6 mt-3 mb-3">
+        <form method="POST">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input name="nombre" id="nombre" class="form-control" type="text" placeholder="Ingrese el nombre"/>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="apellido">Apellido</label>
+                        <input name="apellido" id="apellido" class="form-control" type="text" placeholder="Ingrese el apellido"/>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="cedula">C.I</label>
+                <input name="cedula" id="cedula" class="form-control" type="text" placeholder="Ingrese numero de cedula"/>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Direccion</label>
+                <input name="direccion" id="direccion" class="form-control" type="text" placeholder="Ingrese direccion"/>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Telefono</label>
+                <input name="telefono" id="telefono" class="form-control" type="text" placeholder="Ingrese direccion"/>
+            </div>
+            <div class="form-group">
+                <label for="monto">Monto de apertura</label>
+                <input name="monto" id="monto" class="form-control" type="number" placeholder="Ingrese el monto de apertura"/>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-info form-control" type="submit" value="Registrar">
+            </div>
+        </form>
+    </div>
+</div>

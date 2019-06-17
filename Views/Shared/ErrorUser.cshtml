@@ -1,0 +1,14 @@
+@{
+    Layout = "_Layout";
+
+    string mensajes = ViewBag.mensaje;
+    var path = ViewBag.path;
+}
+<div class="row justify-content-center">
+    <div class="col-6">
+        <div class="alert alert-danger">
+            @mensajes
+        </div>
+        <a class="btn btn-outline-success form-control" href="@path">Entendido</a> 
+    </div>
+</div>

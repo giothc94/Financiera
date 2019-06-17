@@ -1,0 +1,181 @@
+@{
+    Layout = "_Layout";
+}
+@model Cliente;
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Refinanciamiento</li>
+  </ol>
+</nav>
+<div class="display-4 text-center">Refinanciamiento</div>
+<hr>
+<div class="row justify-content-center">
+    <div class="col-6">
+        <nav class="navbar navbar-light bg-light justify-content-center">
+            <form class="form-inline" method="POST">
+                <input name="cedula" class="form-control mr-sm-2" type="search" placeholder="C.I del cliente" aria-label="C.I del cliente">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Buscar cliente</button>
+            </form>
+        </nav>
+    </div>
+</div>
+
+@if (Model == null || Model.id == 0)
+{
+    <div class="alert alert-info">Realiza una consulta</div>
+}else
+{
+    <div class="row justify-content-left mt-3">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title h2">Informacion del cliente</div>
+                    <div class="row">
+                        <div class="col">
+                            <small><strong>C.I</strong><br>@Model.cedula</small><br>
+                        </div>
+                        <div class="col">
+                            <small><strong>Numero de cuenta</strong><br>@Model.cuenta.nrCuenta</small><br>                        
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small><strong>Nombre</strong><br>@Model.nombre</small><br>
+                        </div>
+                        <div class="col">
+                            <small><strong>Apellido</strong><br>@Model.apellido</small><br>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small><strong>Direccion</strong><br>@Model.direccion</small>
+                        </div>
+                        <div class="col">
+                            <small><strong>Telefono</strong><br>@Model.telefono</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <strong>Disponible: </strong> $ @Model.cuenta.monto
+                </div>
+            </div>
+        </div>
+    </div>
+    @foreach (var prestamo in @Model.prestamos)
+    {
+        <div class="row mt-3 ">
+            <div class="col">
+                <div class="card">
+                    <div class="card-title bg-light ">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-9">
+                                    @prestamo.id
+                                    <br><strong class="text-uppercase">fecha Solicitado: </strong>@prestamo.fechaSolicitado.ToString("MM/dd/yyyy")
+                                    <br><strong class="text-uppercase">fecha Focal: </strong>@prestamo.fechaFocal.ToString("MM/dd/yyyy")
+                                    <br><strong class="text-uppercase">Efectivo solicitado: </strong>@prestamo.efectivoSolicitado
+                                    <br><strong class="text-uppercase">timpo Limite de pago: </strong>@prestamo.timpoLimite meses
+                                    <br><strong class="text-uppercase">tasa Interes: </strong>@prestamo.tasaInteres
+                                    <br><strong class="text-uppercase">monto interes: </strong>@prestamo.montoInteres
+                                    <br><strong class="text-uppercase">saldo Deuda: </strong>@prestamo.saldoDeuda
+                                    <br><strong class="text-uppercase">numero Pagos: </strong>@prestamo.numeroPagos
+                                    <br><strong class="text-uppercase">periodo de Pagos: </strong>@prestamo.periodoPago
+                                </div>
+                                <div class="col-3">
+                                    <input class="btn btn-outline-success" type="button" data-toggle="modal" data-target="#modal_@prestamo.id" value="Refinanciar">
+                                    <input class="btn btn-outline-info" type="submit" value="Mostrar pagos" onclick="mostrar(@prestamo.id)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="@prestamo.id" class="card-body" style="display: none;">
+                        @{ var sumTotal = 0.0;}
+                        @foreach (var pago in prestamo.pagos)
+                        {
+                            <div class="row">
+                                    <div class="col-10">
+                                        <small>
+                                            <strong>Fecha limite de pago: </strong>@pago.fechaLimite.ToString("MM/dd/yyyy")<br>
+                                        </small>
+                                    </div>
+                                    <div class="col-2">
+                                        <small>
+                                            <strong>Saldo: </strong> $ @pago.montoPagar.ToString("#00.00")
+                                        </small>
+                                    </div>
+                            </div><hr>
+                            sumTotal += pago.montoPagar;
+                        }
+                        <div class="row">
+                                    <div class="col-10">
+                                    </div>
+                                    <div class="col-2">
+                                        <small>
+                                            <strong>Total: </strong> $ @sumTotal.ToString("#00.00")
+                                        </small>
+                                    </div>
+                            </div><hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @foreach (var prestamo in @Model.prestamos)
+    {
+        <!-- Modal -->
+        <div class="modal fade" id="modal_@prestamo.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Refinanciamiento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <form method="POST" action="/Cliente/Refinanciar">
+                    <div class="modal-body">
+                        <small class="text-info">* Llene todos los campos</small>
+                            <input type="hidden" name="idPrestamo" value="@prestamo.id">
+                            <input type="hidden" name="cedulaCliente" value="@Model.cedula">
+                            <div class="form-group">
+                                <label for="cantidad">Cantidad de pagos</label>
+                                <input id="cantidad" class="form-control" name="cantidad" type="number" placeholder="Ejemplo. 1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="periodo">Periodos</label>
+                                <input id="periodo" class="form-control" name="periodo" type="number" placeholder="Ejemplo. 1" required>
+                            </div>
+                            
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Refinanciar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+        <!-- Modal -->
+
+    }
+}
+<script>
+    function mostrar(id){
+        if(document.getElementById(`${id}`).style.display != 'none'){
+            document.getElementById(`${id}`).style.display = 'none'
+        }else{
+            document.getElementById(`${id}`).style.display = 'initial'
+        }
+    }
+    function print(data){
+        console.log(data)
+    }
+</script>

@@ -1,0 +1,79 @@
+@{
+    Layout = "_Layout";
+}
+@model Cliente;
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Consulta de transaccion</li>
+  </ol>
+</nav>
+<div class="row justify-content-center">
+    <div class="col-6">
+        <nav class="navbar navbar-light bg-light justify-content-center">
+            <form class="form-inline" method="POST">
+                <input name="cedula" class="form-control mr-sm-2" type="search" placeholder="C.I del cliente" aria-label="C.I del cliente">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Buscar cliente</button>
+            </form>
+        </nav>
+    </div>
+</div>
+@if (Model == null)
+{
+    <div class="alert alert-info">Realiza una consulta</div>
+}else
+{
+  <div class="row justify-content-center mt-3">
+      <div class="col-6">
+          <div class="card">
+              <div class="card-body">
+                  <div class="card-title h2">Informacion del cliente</div>
+                  <div class="row">
+                      <div class="col">
+                          <small><strong>C.I</strong><br>@Model.cedula</small><br>
+                      </div>
+                      <div class="col">
+                          <small><strong>Numero de cuenta</strong><br>@Model.cuenta.nrCuenta</small><br>                        
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col">
+                          <small><strong>Nombre</strong><br>@Model.nombre</small><br>
+                      </div>
+                      <div class="col">
+                          <small><strong>Apellido</strong><br>@Model.apellido</small><br>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col">
+                          <small><strong>Direccion</strong><br>@Model.direccion</small>
+                      </div>
+                      <div class="col">
+                          <small><strong>Telefono</strong><br>@Model.telefono</small>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <table class="w-100 mt-4">
+        <thead>
+          <th class="border border-dark p-3">Tipo de transaccion</th>
+          <th class="border border-dark p-3">Monto de la transaccion</th>
+        </thead>
+        <tbody>
+          @foreach (var registro in @Model.cuenta.registros)
+          {
+            <tr>
+              <td class="border border-dark p-3">@registro.tipoRegistro</td>
+              <td class="border border-dark p-3">@registro.monto</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

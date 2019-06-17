@@ -1,0 +1,149 @@
+@{
+    Layout = "_Layout";
+    Cliente cliente = ViewBag.Cliente;
+    Prestamo prestamo = ViewBag.Prestamo;
+    var pp = new PagoPrestamo();
+    List<DateTime> lista = ViewBag.ListaFechas;
+}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Refinanciamiento</li>
+  </ol>
+</nav>
+<div class="display-4 text-center">Refinanciamiento</div>
+<hr>
+<div class="row justify-content-left mt-3">
+  <div class="col-6">
+      <div class="card">
+          <div class="card-body">
+              <div class="card-title h2">Informacion del prestamo</div>
+              <div class="row">
+                  <div class="col">
+                      <small><strong>I.D PRESTAMO</strong><br>@prestamo.id</small><br>
+                  </div>
+              </div>
+                  <hr>
+              <div class="row">
+                  <div class="col">
+                      <small><strong>Efectivo solicitado</strong><br>$ @prestamo.efectivoSolicitado</small>
+                  </div>
+                  <div class="col">
+                      <small><strong>Interes al @prestamo.tasaInteres %</strong><br>$ @prestamo.montoInteres</small>
+                  </div>
+                  <div class="col">
+                      <small><strong>Total</strong><br>$ @prestamo.saldoDeuda</small>
+                  </div>
+              </div>
+                  <hr>
+              <div class="row">
+                  <div class="col">
+                      <small><strong>Cliente</strong><br>@cliente.nombre @cliente.apellido</small><br>
+                  </div>
+                  <div class="col">
+                      <small><strong>Cedula</strong><br>@cliente.cedula</small><br>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col">
+                      <small><strong>Fecha solicitado</strong><br>@prestamo.fechaSolicitado.ToString("MM/dd/yyyy")</small>
+                  </div>
+                  <div class="col">
+                      <small><strong>Fecha focal</strong><br>@prestamo.fechaFocal.ToString("MM/dd/yyyy")</small>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="col-6">
+    <strong>Lista de pagos anterior</strong>
+    @foreach (var pago in @prestamo.pagos)
+    {
+      <div class="row">
+        <div class="col-6">
+          <small><strong>Fecha limite: </strong></small>
+          <small>@pago.fechaLimite.ToString("MM/dd/yyyy")</small>
+        </div>
+        <div class="col-6">
+          <small><strong>Monto: $ </strong></small>
+          <small>@pago.montoPagar</small>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<form method="POST">
+  <input type="hidden" name="prestamoId" value="@prestamo.id">
+  <input type="hidden" name="fechaFocal" value="@prestamo.fechaFocal.ToString("dd/MM/yy")">
+  <input type="hidden" name="monto" value="@prestamo.saldoDeuda">
+  
+  <div class="row p-2 mt-3 justify-content-center">
+    <div class="col- 4">
+      <div class="form-group alert alert-info">
+        <input type="checkbox" id="checkInteres" name="checkInteres">
+        <label class="m-0">Mantener interes fijo a todos los meses.</label>
+        <input class="form-control text-right" type="text" id="interesFijo" name="interesFijo" placeholder="Ingrese el interes 0.0%">
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <table class="w-100">
+        <thead>
+          <th class="text-center" >Mes</th>
+          <th class="text-center" >Fecha</th>
+          <th class="text-center" >Tasa de interes</th>
+        </thead>
+        <tbody>
+          @foreach (var fecha in lista)
+          {
+            <tr>
+              <td class="p-2 border border-dark m-auto text-center">@pp.NumberToMonth(@fecha.Month)</td>
+              <td class="p-2 border border-dark m-auto text-center">@fecha.ToString("dd/MM/yy")</td>
+              <input type="hidden" name="fechas[]" value="@fecha.ToString("dd/MM/yy")" >
+              <td class="border border-dark m-auto text-center"><input class="form-control" type="text" name="interesMes[]" placeholder="0.0%"></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row justify-content-center m-1 mt-3">
+    <div class="col-6">
+      <small class="text-danger"> * Asegurese de revisar detenidamente la informacion</small><br>
+      <small class="text-danger"> * Llene todos los campos solicitados</small><br>
+      <div class="form-group">
+        <input type="submit" asp-route="ConfirmacionRefinanciacion" class="form-control btn btn-info mt-3" value="Refinanciar">
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  var check = document.getElementById('checkInteres')
+  var interesFijo = document.getElementById('interesFijo')
+  var interesMes = document.getElementsByName('interesMes[]')
+
+
+  if(!check.checked){
+      interesFijo.style.display = 'none'
+    }
+  check.addEventListener('click',function(){
+    if(!check.checked){
+      interesFijo.style.display = 'none'
+      interesMes.forEach(input => {
+        input.disabled = false
+      })
+    }else if(check.checked){
+      interesFijo.style.display = 'inherit'
+      interesMes.forEach(input => {
+        input.disabled = true
+      })
+    }
+  })
+
+
+
+</script>

@@ -1,0 +1,249 @@
+@{
+    Layout = "_Layout";
+}
+@model Cliente;
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Prestamos</li>
+  </ol>
+</nav>
+<div class="display-4 text-center">Prestamos</div>
+<hr>
+<div class="row justify-content-center">
+    <div class="col-6">
+        <nav class="navbar navbar-light bg-light justify-content-center">
+            <form class="form-inline" method="POST">
+                <input name="cedula" class="form-control mr-sm-2" type="search" placeholder="C.I del cliente" aria-label="C.I del cliente">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Buscar cliente</button>
+            </form>
+        </nav>
+    </div>
+</div>
+@if (Model == null || Model.id == 0)
+{
+    <div class="alert alert-info">Realiza una consulta</div>
+}else
+{
+    
+    <div class="row justify-content-left mt-3">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title h2">Informacion del cliente</div>
+                    <div class="row">
+                        <div class="col">
+                            <small><strong>C.I</strong><br>@Model.cedula</small><br>
+                        </div>
+                        <div class="col">
+                            <small><strong>Numero de cuenta</strong><br>@Model.cuenta.nrCuenta</small><br>                        
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small><strong>Nombre</strong><br>@Model.nombre</small><br>
+                        </div>
+                        <div class="col">
+                            <small><strong>Apellido</strong><br>@Model.apellido</small><br>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small><strong>Direccion</strong><br>@Model.direccion</small>
+                        </div>
+                        <div class="col">
+                            <small><strong>Telefono</strong><br>@Model.telefono</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    Efectivo disponible <strong>$ @Model.cuenta.monto</strong>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <form method="POST">
+                    <div class="card-body">
+                        <input name="id-cuenta" type="hidden" value="@Model.idCuenta">
+                        <input name="id-cliente" type="hidden" value="@Model.id">
+                        <div class="form-group">
+                            <label>Efectivo solicitado</label>
+                            <input name="efectivo-solicitado" id="montoSolicitado" type="text" class="form-control" placeholder="Monto solicitado" required>
+                        </div>
+                        <div class="form-group form-inline">
+                            <label class="ml-0 mr-5">Tasa de interes</label>
+                            <input name="tasa-interes" id="tasaInteres" class="form-control text-right" type="text" placeholder="0.0" required>
+                            <label class="ml-2">%</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Tiempo limite</label><br>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <select name="limite-año" id="year" class="m-auto w-25 form-control">\
+                                    <option value="0"> -- Year -- </option>
+                                    @for (int i = 1; i <= 12; i++)
+                                    {
+                                        <option>@i</option> 
+                                    }
+                                </select>
+                                <select name="limite-mes" id="month" class="m-auto w-25 form-control">
+                                    <option value="0">-- Month --</option>   
+                                    @for (int i = 1; i <= 12; i++)
+                                    {
+                                        <option>@i</option> 
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Periodos de pago</label>
+                            <select name="periodo-pagos" id="periodoPago" class="form-control">
+                                <option name="periodo-pagos" value="0">-- Periodo --</option>
+                                <option name="periodo-pagos" value="1">Mensual</option>
+                                <option name="periodo-pagos" value="2">Bimestral</option>
+                                <option name="periodo-pagos" value="3">Trimestral</option>
+                                <option name="periodo-pagos" value="4">Cuatrimestral</option>
+                                <option name="periodo-pagos" value="6">Semestral</option>
+                                <option name="periodo-pagos" value="12">Anual</option>
+                            </select>
+                        </div>
+                        <div class="form-group text-right">
+                            <label class="text-info mr-2">* Calculo previo al prestamo</label>
+                            <input id="btnCalcular" type="button" class="btn btn-warning" value="Calcular">
+                        </div>
+                        <div class="form-group">
+                            <input name="total-deuda" id="resultadoCalculo" type="text" class="form-control" placeholder="total a pagar" required>
+                        </div>
+                        <div class="form-group">
+                            <input id="btnPrestamo" asp-route="Presta" type="submit" class="form-control btn btn-info" disabled value="Hacer prestamo">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="h3">Movimientos</div>
+            @foreach (var registro in @Model.cuenta.registros)
+            {
+                <table>
+                    <thead>
+                        <th class="p-2 border border-info">Tipo de movimiento</th>
+                        <th class="p-2 border border-info">Efectivo manejado</th>
+                    </thead>
+                    <tr>
+                        <td class="p-2 border border-info">@registro.tipoRegistro</td>
+                        <td class="p-2 border border-info">$ @registro.monto</td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+}
+<script>
+    var btnCalculo = document.getElementById('btnCalcular')
+    var interes = document.getElementById('tasaInteres')
+    var resultadoCalculo = document.getElementById('resultadoCalculo')
+    var btnPrestamo = document.getElementById('btnPrestamo')
+
+        var mesesDePagos = []
+    btnCalculo.addEventListener('click',function(){
+        mesesDePagos = []
+        let montoSolicitado = document.getElementById('montoSolicitado').value
+        var tasaInteres = document.getElementById('tasaInteres').value
+        let year = document.getElementById('year').value
+        let month = document.getElementById('month').value
+        let periodo = parseInt(document.getElementById('periodoPago').value)
+        let meses = toMonth(year)
+        let totalMeses = parseInt(meses) + parseInt(month)
+
+        let cont = 0
+
+        if(totalMeses === 0 || montoSolicitado <= 0 || tasaInteres < 0 || periodo == 0){
+            alert('Debes llenar todos los campos')
+        } else {
+            for(var i = 1; i <= totalMeses; i += periodo){
+                mesesDePagos.push(numberToMonth(i))
+                cont++
+            }
+            var interes = calculoInteresSimple(montoSolicitado,tasaInteres,totalMeses)
+            resultadoCalculo.value = (parseFloat(montoSolicitado)+interes).toFixed(2)
+            btnPrestamo.removeAttribute("disabled")
+        }
+    })
+
+    function toMonth(year){
+        return year*12
+    }
+
+    function numberToMonth(numberMonth){
+        var month = numberMonth + "-";
+
+        if(numberMonth > 12){
+            while(numberMonth > 12){
+                numberMonth -= 12
+            }
+        }
+
+        switch(numberMonth){
+            case 1: month += "Enero"
+                break;
+            case 2: month += "Febrero"
+                break;
+            case 3: month += "Marzo"
+                break;
+            case 4: month += "Abril"
+                break;
+            case 5: month += "Mayo"
+                break;
+            case 6: month += "Junio"
+                break;
+            case 7: month += "Julio"
+                break;
+            case 8: month += "Agosto"
+                break;
+            case 9: month += "Septiembre"
+                break;
+            case 10: month += "Octubre"
+                break;
+            case 11: month += "Noviembre"
+                break;
+            case 12: month += "Diciembre"
+                break;
+        }
+        return month
+    }
+
+    function calculoInteresSimple(capital, interes, tiempo){
+        var form = capital*(interes/100)*(tiempo/12)
+        return form
+    }
+    function limpiarCampos(){
+        if(!btnPrestamo.disabled){
+            let montoSolicitado = document.getElementById('montoSolicitado')
+            let tasaInteres = document.getElementById('tasaInteres')
+            let year = document.getElementById('year')
+            let month = document.getElementById('month')
+            let periodo = document.getElementById('periodoPago')
+            let total = document.getElementById('resultadoCalculo')
+
+            montoSolicitado.value = ""
+            tasaInteres.value = ""
+            year.value = 0
+            month.value = 0
+            periodo.value = 0
+            total.value = ""
+            btnPrestamo.disabled = true
+        }
+    }
+    document.getElementById('montoSolicitado').addEventListener('click',limpiarCampos)
+    document.getElementById('tasaInteres').addEventListener('click',limpiarCampos)
+    document.getElementById('year').addEventListener('click',limpiarCampos)
+    document.getElementById('month').addEventListener('click',limpiarCampos)
+    document.getElementById('periodoPago').addEventListener('click',limpiarCampos)
+    document.getElementById('resultadoCalculo').addEventListener('click',limpiarCampos)
+</script>

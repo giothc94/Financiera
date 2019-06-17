@@ -1,0 +1,17 @@
+@{
+    Layout = "_Layout";
+
+    string mensajes = ViewBag.mensaje;
+    var msms = mensajes.Split('-');
+}
+<div class="row justify-content-center">
+    <div class="col-6">
+        <div class="alert alert-success">
+            @foreach (var msm in msms)
+            {
+                <p>@msm</p>
+            }
+        </div>
+        <a class="btn btn-outline-success form-control" href="/Home/Index">Listo</a> 
+    </div>
+</div>
